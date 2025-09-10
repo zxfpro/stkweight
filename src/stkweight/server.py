@@ -40,7 +40,7 @@ app.add_middleware(
 # --- End CORS Configuration ---
 
 
-
+files = "temp_analyse.html"
 
 @app.get("/")
 async def root():
@@ -80,7 +80,6 @@ async def upload_csv(file: UploadFile = File(..., description="The CSV file to u
         {'period': 5, 'price_col': 'EveningWeight', 'color': 'blue'},
         {'period': 10, 'price_col': 'MorningWeight', 'color': 'purple'}
         ]
-        files = "tests/resources/temp_analyse.html"
         plot_weight_candlestick_daily_full_range_with_volume(df, ma_configs=ma_config_daily, 
                                                              show_calorie_volume=True,
                                                              show = False,
@@ -106,7 +105,6 @@ async def upload_csv(file: UploadFile = File(..., description="The CSV file to u
 @app.get("/get_analyse/", summary="get analyse html")
 async def get_analyse():
 
-    files = "tests/resources/temp_analyse.html"
     with open(files,'r') as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=200)
