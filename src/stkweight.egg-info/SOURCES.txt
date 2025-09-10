@@ -7,5 +7,6 @@ src/stkweight/server.py
 src/stkweight.egg-info/PKG-INFO
 src/stkweight.egg-info/SOURCES.txt
 src/stkweight.egg-info/dependency_links.txt
+src/stkweight.egg-info/requires.txt
 src/stkweight.egg-info/top_level.txt
 tests/test_main.py
