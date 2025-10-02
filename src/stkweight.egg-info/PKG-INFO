@@ -5,6 +5,10 @@ Summary: Add your description here
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 Requires-Dist: anyio>=4.10.0
+Requires-Dist: dash>=3.2.0
+Requires-Dist: dash-core-components>=2.0.0
+Requires-Dist: dash-html-components>=2.0.0
+Requires-Dist: dash-table>=5.0.0
 Requires-Dist: fastapi>=0.116.1
 Requires-Dist: kaleido>=1.0.0
 Requires-Dist: pandas>=2.3.2

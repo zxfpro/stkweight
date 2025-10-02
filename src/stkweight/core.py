@@ -74,12 +74,12 @@ def plot_weight_candlestick_daily_full_range_with_volume(data, ma_configs=None, 
     """
     if not isinstance(data, pd.DataFrame):
         raise TypeError("输入数据必须是 pandas DataFrame。")
-    required_cols = ['Date', 'MorningWeight', 'EveningWeight', 'DailyHighestWeight', 'DailyLowestWeight']
+    required_cols = ['Mon_Weight', 'Eve_Weight', 'Max_Weight', 'Min_Weight']
     if not all(col in data.columns for col in required_cols):
         raise ValueError(f"DataFrame 必须包含 {required_cols} 列。")
     
     if show_calorie_volume:
-        calorie_cols = ['CalorieIntake', 'CalorieBurn']
+        calorie_cols = ['KCal_Input', 'KCal_Output']
         if not all(col in data.columns for col in calorie_cols):
             print("警告: 缺少卡路里数据列，将不显示净卡路里成交量。")
             show_calorie_volume = False
@@ -99,10 +99,10 @@ def plot_weight_candlestick_daily_full_range_with_volume(data, ma_configs=None, 
     # 1. 添加蜡烛图 (到第一个子图)
     fig.add_trace(go.Candlestick(
         x=data['Date'],
-        open=data['MorningWeight'],
-        high=data['DailyHighestWeight'],
-        low=data['DailyLowestWeight'],
-        close=data['EveningWeight'],
+        open=data['Mon_Weight'],
+        high=data['Max_Weight'],
+        low=data['Min_Weight'],
+        close=data['Eve_Weight'],
         increasing_line_color='green',
         decreasing_line_color='red',
         name='每日体重波动'
@@ -121,7 +121,7 @@ def plot_weight_candlestick_daily_full_range_with_volume(data, ma_configs=None, 
 
     # 3. 添加净卡路里柱状图 (到第二个子图)
     if show_calorie_volume:
-        net_calorie_trace = create_net_calorie_volume_trace(data, 'Date', 'CalorieIntake', 'CalorieBurn')
+        net_calorie_trace = create_net_calorie_volume_trace(data, 'Date', 'KCal_Input', 'KCal_Output')
         fig.add_trace(net_calorie_trace, row=2, col=1)
 
         # 更新第二行的Y轴标题
@@ -155,23 +155,27 @@ def plot_weight_candlestick_daily_full_range_with_volume(data, ma_configs=None, 
 
     # 隐藏主图X轴的日期标签，只在底部子图显示
     fig.update_xaxes(showticklabels=False, row=1, col=1)
+    return fig
 
-    if show:
-        fig.show()
-    else:
-        # print("图表已保存为 scatter_plot.png (使用 pio.write_image)")
-        # fig.write_image(
-        #     "tests/resources/scatter_plot2.png",
-        #     format="png",          # 可以显式指定格式，默认为根据文件名后缀判断
-        #     width=1800,             # 设置图片宽度（像素）
-        #     height=1600,            # 设置图片高度（像素）
-        #     scale=2                # 放大倍数，用于提高分辨率，例如 2 倍分辨率
-        #     )
-        fig.write_html(
-            file_path,
-            include_plotlyjs="cdn",  # 将 Plotly.js 库通过 CDN 引入
-            full_html=True,          # 生成完整的 HTML 文件 (包含 <head>, <body> 等)
-            default_width="80%",     # 设置默认宽度
-            default_height=500       # 设置默认高度
-        )
+    # if show:
+    #     fig.show()
+    # else:
+    #     # print("图表已保存为 scatter_plot.png (使用 pio.write_image)")
+    #     # fig.write_image(
+    #     #     "tests/resources/scatter_plot2.png",
+    #     #     format="png",          # 可以显式指定格式，默认为根据文件名后缀判断
+    #     #     width=1800,             # 设置图片宽度（像素）
+    #     #     height=1600,            # 设置图片高度（像素）
+    #     #     scale=2                # 放大倍数，用于提高分辨率，例如 2 倍分辨率
+    #     #     )
+    #     fig.write_html(
+    #         file_path,
+    #         include_plotlyjs="cdn",  # 将 Plotly.js 库通过 CDN 引入
+    #         full_html=True,          # 生成完整的 HTML 文件 (包含 <head>, <body> 等)
+    #         default_width="80%",     # 设置默认宽度
+    #         default_height=500       # 设置默认高度
+    #     )
 # output.svg
+
+
+

@@ -1,6 +1,6 @@
 import pandas as pd
 from stkweight.core import plot_weight_candlestick_daily_full_range_with_volume
-
+from stkweight.core import dash_server
 
 def test_plot_weight_candlestick_daily_full_range_with_volume():
     df = pd.read_csv('tests/resources/weight.csv',index_col=0)
@@ -13,4 +13,6 @@ def test_plot_weight_candlestick_daily_full_range_with_volume():
         {'period': 5, 'price_col': 'EveningWeight', 'color': 'blue'},
         {'period': 10, 'price_col': 'MorningWeight', 'color': 'purple'}
     ]
-    plot_weight_candlestick_daily_full_range_with_volume(df, ma_configs=ma_config_daily, show_calorie_volume=True,show = False)
+    plot_weight_candlestick_daily_full_range_with_volume(df, ma_configs=ma_config_daily, show_calorie_volume=True,show = False,
+                                                         file_path = "./interactive_bar_chart.html")
+

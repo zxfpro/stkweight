@@ -1,4 +1,4 @@
-   ,      Date  ,MorningWeight  ,EveningWeight  ,DailyHighestWeight  ,DailyLowestWeight  ,CalorieIntake  ,CalorieBurn
+   ,      Date  ,Mon_Weight  ,Eve_Weight  ,Max_Weight  ,Min_Weight  ,KCal_Input  ,KCal_Output
 0,2023-10-26  ,150.5,151.2,151.5,150.0,2200,2000
 1,2023-10-27  ,149.8,150.5,150.8,149.5,2500,1800
 2,2023-10-28  ,150.2,150.8,151.1,149.9,2000,2200
