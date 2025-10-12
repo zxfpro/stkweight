@@ -3,8 +3,9 @@ import os
 from datetime import datetime
 from src.bank_package.log import Log
 
+
 class BankStatementAnalyzer:
-    def __init__(self, log_level: str = 'info'):
+    def __init__(self, log_level: str = "info"):
         """
         初始化银行流水分析器。
 
@@ -34,16 +35,20 @@ class BankStatementAnalyzer:
         if not os.path.exists(file_path):
             self.log.logger.error(f"文件不存在: {file_path}")
             raise FileNotFoundError(f"文件不存在: {file_path}")
-        
+
         try:
             self.df = pd.read_csv(file_path)
-            self.log.logger.info(f"成功加载数据: {file_path}, 包含 {len(self.df)} 条记录。")
+            self.log.logger.info(
+                f"成功加载数据: {file_path}, 包含 {len(self.df)} 条记录。"
+            )
             return self.df
         except Exception as e:
             self.log.logger.error(f"加载数据失败: {e}")
             raise
 
-    def standardize_transactions(self, column_name: str, replace_rules: dict) -> pd.DataFrame:
+    def standardize_transactions(
+        self, column_name: str, replace_rules: dict
+    ) -> pd.DataFrame:
         """
         统一银行流水中特定列（如“对方户名”）的名称。
 
@@ -66,10 +71,18 @@ class BankStatementAnalyzer:
         original_count = self.df[column_name].nunique()
         self.df[column_name] = self.df[column_name].replace(replace_rules)
         new_count = self.df[column_name].nunique()
-        self.log.logger.info(f"列 '{column_name}' 标准化完成。原始唯一值数量: {original_count}, 标准化后唯一值数量: {new_count}。")
+        self.log.logger.info(
+            f"列 '{column_name}' 标准化完成。原始唯一值数量: {original_count}, 标准化后唯一值数量: {new_count}。"
+        )
         return self.df
 
-    def categorize_payments(self, time_column: str = '交易时间', amount_column: str = '发生额', counterparty_column: str = '对方户名', summary_column: str = '业务摘要') -> pd.DataFrame:
+    def categorize_payments(
+        self,
+        time_column: str = "交易时间",
+        amount_column: str = "发生额",
+        counterparty_column: str = "对方户名",
+        summary_column: str = "业务摘要",
+    ) -> pd.DataFrame:
         """
         为每笔交易自动添加一个“支付类别”标签。
 
@@ -90,13 +103,18 @@ class BankStatementAnalyzer:
             self.log.logger.warning("数据未加载，请先调用 load_data 方法。")
             return None
 
-        required_columns = [time_column, amount_column, counterparty_column, summary_column]
+        required_columns = [
+            time_column,
+            amount_column,
+            counterparty_column,
+            summary_column,
+        ]
         for col in required_columns:
             if col not in self.df.columns:
                 self.log.logger.error(f"缺少必要列 '{col}'，无法进行支付类别归类。")
                 raise ValueError(f"缺少必要列 '{col}'，无法进行支付类别归类。")
 
-        self.df['支付类别'] = '未知'
+        self.df["支付类别"] = "未知"
 
         # 确保时间列是datetime类型
         try:
@@ -124,10 +142,18 @@ class BankStatementAnalyzer:
 
             # 支出
             # 工作餐
-            if "卤肉饭" in counterparty or "沙县小吃" in counterparty or (20 <= abs(amount) <= 50 and 11 <= transaction_time <= 14):
+            if (
+                "卤肉饭" in counterparty
+                or "沙县小吃" in counterparty
+                or (20 <= abs(amount) <= 50 and 11 <= transaction_time <= 14)
+            ):
                 return "工作餐"
             # 大餐
-            if "火锅" in counterparty or "烧烤" in counterparty or (abs(amount) > 50 and 18 <= transaction_time <= 22):
+            if (
+                "火锅" in counterparty
+                or "烧烤" in counterparty
+                or (abs(amount) > 50 and 18 <= transaction_time <= 22)
+            ):
                 return "大餐"
             # 会员费
             if "会员" in summary or "服务费" in summary or "年费" in summary:
@@ -150,11 +176,13 @@ class BankStatementAnalyzer:
             # 其他支出
             return "其他支出"
 
-        self.df['支付类别'] = self.df.apply(apply_category, axis=1)
+        self.df["支付类别"] = self.df.apply(apply_category, axis=1)
         self.log.logger.info("支付类别归类完成。")
         return self.df
 
-    def analyze_income_expense_ratio(self, amount_column: str = '发生额', exclude_threshold: float = 8000) -> dict:
+    def analyze_income_expense_ratio(
+        self, amount_column: str = "发生额", exclude_threshold: float = 8000
+    ) -> dict:
         """
         计算一段时间内的总收入与总支出的比率。
 
@@ -174,19 +202,25 @@ class BankStatementAnalyzer:
             return None
 
         if amount_column not in self.df.columns:
-            self.log.logger.error(f"缺少必要列 '{amount_column}'，无法进行收支比例分析。")
+            self.log.logger.error(
+                f"缺少必要列 '{amount_column}'，无法进行收支比例分析。"
+            )
             raise ValueError(f"缺少必要列 '{amount_column}'，无法进行收支比例分析。")
 
         # 过滤掉大额交易
         filtered_df = self.df[abs(self.df[amount_column]) <= exclude_threshold].copy()
 
         total_income = filtered_df[filtered_df[amount_column] > 0][amount_column].sum()
-        total_expense = abs(filtered_df[filtered_df[amount_column] < 0][amount_column].sum())
+        total_expense = abs(
+            filtered_df[filtered_df[amount_column] < 0][amount_column].sum()
+        )
 
         if total_expense == 0:
             self.log.logger.warning("没有支出记录，无法计算收支比例。")
             return {"总收入": total_income, "总支出": total_expense, "收支比例": "N/A"}
-        
+
         ratio = total_income / total_expense
-        self.log.logger.info(f"收支比例分析完成。总收入: {total_income:.2f}, 总支出: {total_expense:.2f}, 比例: {ratio:.2f}。")
+        self.log.logger.info(
+            f"收支比例分析完成。总收入: {total_income:.2f}, 总支出: {total_expense:.2f}, 比例: {ratio:.2f}。"
+        )
         return {"总收入": total_income, "总支出": total_expense, "收支比例": ratio}
