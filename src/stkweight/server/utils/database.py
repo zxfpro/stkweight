@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-DATABASE_URL = "mysql+aiomysql://root:1234@localhost:3306/prompts"
+DATABASE_URL = "mysql+pymysql://zxf_root:Zhf4233613%40@rm-2ze0793c6548pxs028o.mysql.rds.aliyuncs.com:3306/serverz"
 
 class Base(DeclarativeBase):
     pass
