@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp","--api-key","ctx7sk-6858458a-9053-4492-8759-6c95b5650eb8"],
+      "description": "Live documentation lookup"
+    }
+  },
+  "_comments": {
+    "usage": "Copy the servers you need to your ~/.claude.json mcpServers section",
+    "env_vars": "Replace YOUR_*_HERE placeholders with actual values",
+    "disabling": "Use disabledMcpServers array in project config to disable per-project",
+    "context_warning": "Keep under 10 MCPs enabled to preserve context window"
+  }
+}

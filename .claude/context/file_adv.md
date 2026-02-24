@@ -1,0 +1,1 @@
+我希望将 demand.md 与 PRD.md 移动到.claude/plans/中
